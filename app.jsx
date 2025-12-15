@@ -3,40 +3,79 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import LoginScreen from './screens/loginScreen.jsx';
-import BooksScreen from './screens/BooksScreen.jsx';
-import StatusScreen from './screens/StatusScreen.jsx';
-import SettingsScreen from './screens/SettingsScreen.jsx';
-import DetailScreen from './screens/DetailsScreen.jsx';
+// Screens
+import LoginScreen from './loginScreen';
+import BookScreen from './BookScreen';
+import DetailScreen from './DetailScreen';
+import StatusScreen from './StatusScreen';
+import SettingScreens from './SettingScreens';
 
-const Stack = createNativeStackNavigator();
+const RootStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const BookStack = createNativeStackNavigator();
 
-// Tab Navigator: Books / Status / Settings
+
+// 📚 Books + Detail Stack (AYNI KLASÖR)
+function BooksStackScreen() {
+  return (
+    <BookStack.Navigator>
+      <BookStack.Screen 
+        name="Books"
+        component={BookScreen}
+        options={{ title: 'Kitap Listesi' }}
+      />
+      <BookStack.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={({ route }) => ({
+          title: route.params?.bookTitle || 'Kitap Detayı',
+        })}
+      />
+    </BookStack.Navigator>
+  );
+}
+
+
+// 🏠 Bottom Tabs
 function HomeTabs() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Books" component={BooksScreen} />
-      <Tab.Screen name="Status" component={StatusScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen
+        name="BooksTab"
+        component={BooksStackScreen}
+        options={{ title: 'Kitaplar', headerShown: false }}
+      />
+      <Tab.Screen
+        name="Status"
+        component={StatusScreen}
+        options={{ title: 'Durum' }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingScreens}
+        options={{ title: 'Ayarlar' }}
+      />
     </Tab.Navigator>
   );
 }
 
+
+// 🚀 Root Navigation
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeTabs} options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="Detail" 
-          component={DetailScreen} 
-          options={({ route }) => ({
-            title: route.params?.bookTitle || 'Kitap Detayı',
-          })} 
+      <RootStack.Navigator initialRouteName="Login">
+        <RootStack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
         />
-      </Stack.Navigator>
+        <RootStack.Screen
+          name="Home"
+          component={HomeTabs}
+          options={{ headerShown: false }}
+        />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
